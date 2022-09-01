@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Any2cast</title>
+    <link rel="stylesheet" href="static/css/style.css" type="text/css">
+  </head>
+  <body>
+    <h1>Any2cast</h1>
+    <div class="podcasts">
+      {{#each dirs}}
+        <li class="podcast">
+          <a href="{{this.link}}">
+            {{this.name}}
+          </a>
+        </li>
+      {{/each}}
+    </div>
+  </body>
+</html>
