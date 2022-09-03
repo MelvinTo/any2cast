@@ -71,6 +71,9 @@ impl<'a> Site<'a> {
             }
         }
 
+        // sort by dir name
+        self.dirs.sort_by(|a, b| a.name.partial_cmp(&b.name).unwrap());
+
         Ok(())
     }
 
