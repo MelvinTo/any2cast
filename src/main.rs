@@ -87,6 +87,7 @@ async fn main() -> Result<()> {
     let link = format!("http://{}:{}", &cli.server, &cli.port);
 
     let cur_dir = env::current_dir()?;
+    let port = cli.port as u16;
 
     HttpServer::new(move || {
         let mut site : Site = Site::new(
@@ -105,7 +106,7 @@ async fn main() -> Result<()> {
 //            .route("/", web::get().to(index))
 //            .route("/p/{podcast}", web::get().to(podcast))
     })
-        .bind(("127.0.0.1", 8080))?
+        .bind(("0.0.0.0", port))?
         .run()
         .await?;
 
