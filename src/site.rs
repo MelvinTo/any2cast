@@ -1,10 +1,9 @@
 use std::path::Path;
 use std::fs;
-use std::fs::metadata;
 
-use log::info;
+use log::debug;
 use anyhow::Result;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use handlebars::Handlebars;
 
@@ -28,7 +27,7 @@ impl<'a> Site<'a> {
         let file_path = Path::new(&path);
         let file_name = file_path.file_name().unwrap();
 
-        info!("Setting up site on {} ...", path);
+        debug!("Setting up site on {} ...", path);
 
         Ok(Site{
             path: path.to_string(),

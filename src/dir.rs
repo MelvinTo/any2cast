@@ -2,10 +2,9 @@ use std::path::Path;
 use std::fs;
 use std::fmt;
 
-use chrono::{DateTime, Utc};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
-use log::{error, debug, info};
+use log::{error, debug};
 
 
 use rss::ChannelBuilder;
@@ -14,7 +13,7 @@ use rss::Guid;
 use rss::Enclosure;
 
 use rss::extension::itunes::ITunesItemExtension;
-use rss::extension::itunes::ITunesChannelExtensionBuilder;
+//use rss::extension::itunes::ITunesChannelExtensionBuilder;
 
 #[derive(Debug, Serialize, Deserialize)]
 enum DirectoryError {
@@ -87,7 +86,7 @@ impl Directory {
 
             let ext = path.extension().unwrap().to_str().unwrap().to_string();
             if ext != "mp3" {
-                info!("Ignore non-mp3 file: {:?}", &path);
+                debug!("Ignore non-mp3 file: {:?}", &path);
                 continue;
             }
 
@@ -143,6 +142,7 @@ impl Directory {
         self.items.push(item.clone());
     }
 
+    #[allow(dead_code)]
     fn num_of_episodes(&self) -> usize {
         self.items.len()
     }

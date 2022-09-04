@@ -1,12 +1,10 @@
 use std::env;
 
 use anyhow::Result;
-use clap::{Args, Parser, Subcommand};
+use clap::Parser;
 
 use any2cast::config;
 use any2cast::site::Site;
-
-use std::sync::Mutex;
 
 use log::info;
 
@@ -14,15 +12,14 @@ use std::path::PathBuf;
 
 use actix_web::{
     get,
-    middleware,
-    web::{self, Data},
-    App, HttpRequest, HttpResponse, HttpServer,
+    web,
+    App, HttpResponse, HttpServer,
     Responder,
 };
 
 use actix_files::NamedFile;
 
-use actix_web::http::{header, Method, StatusCode};
+use actix_web::http::StatusCode;
 
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -59,7 +56,7 @@ async fn podcast(site: web::Data<Site<'_>>, podcast: web::Path<String>) -> impl 
 }
 
 #[get("/p/{podcast}/{media}")]
-async fn media(site: web::Data<Site<'_>>, p: web::Path<(String, String)>) -> impl Responder {
+async fn media(_site: web::Data<Site<'_>>, p: web::Path<(String, String)>) -> impl Responder {
     let (podcast_name, media) = p.into_inner();
     info!("Getting mp3 for podcast {} file {}", &podcast_name, &media);
 
