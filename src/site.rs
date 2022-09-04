@@ -7,6 +7,8 @@ use serde::Serialize;
 
 use handlebars::Handlebars;
 
+use std::cell::RefCell;
+
 use crate::dir::Directory;
 
 #[derive(Debug, Default, Serialize, Clone)]
@@ -19,7 +21,7 @@ pub struct Site<'a> {
 
     pub dirs: Vec<Directory>,
 
-    output_cache: Option<String>,
+    output_cache: RefCell<Option<String>>,
 }
 
 impl<'a> Site<'a> {
@@ -44,14 +46,19 @@ impl<'a> Site<'a> {
         Ok(())
     }
 
-    pub fn to_html(&mut self) -> Result<String> {
-        if self.output_cache.is_none() {
+    pub fn to_html(&self) -> Result<String> {
+        let cache = self.output_cache.borrow();
+        let is_none = cache.is_none();
+
+        if is_none {
+            drop(cache); // readonly to mut
             let json = serde_json::to_value(&self)?;
             let body = self.hb.as_ref().unwrap().render("podcasts", &json)?;
-            self.output_cache = Some(body.to_string());
+            let mut mut_cache = self.output_cache.borrow_mut();
+            mut_cache.replace(body.to_string());
         }
 
-        Ok(self.output_cache.as_ref().unwrap().to_string())
+        Ok(self.output_cache.borrow().clone().unwrap())
     }
 
     pub fn detect_directories(&mut self) -> Result<()> {
