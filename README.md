@@ -15,10 +15,13 @@ $ find .
 ./podcast2
 ./podcast2/2.mp3
 
+# run any2cast in any directory with lots of sub directories that contain mp3 files 
 $ any2cast
 ```
 
 ### Website
+* by default it listens on `0.0.0.0:8080`
+
 <img width="1124" alt="Screen Shot 2022-09-04 at 3 22 28 PM" src="https://user-images.githubusercontent.com/108800/188302286-acdd7a45-cd5d-4c83-aca9-ddf8670202f1.png">
 
 ### Podcast App
@@ -29,19 +32,5 @@ $ any2cast
 
 ``` bash
 cargo build
-```
-
-# Run
-
-``` bash
-# cd to a directory with a list of directories containing mp3 files.
-
-# run any2cast, make sure the host running this service is reachable by visiting <domain>
-any2cast --server <domain> --port <port>
-
-# Example
-any2cast --server mydns.com --port 9999
-
-# Visit http://mydns.com:9999
 ```
 
