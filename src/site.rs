@@ -13,7 +13,6 @@ use crate::dir::Directory;
 pub struct Site<'a> {
     path: String,
     name: String,
-    link: String,
 
     #[serde(skip_serializing)]
     hb: Option<Handlebars<'a>>,
@@ -22,7 +21,7 @@ pub struct Site<'a> {
 }
 
 impl<'a> Site<'a> {
-    pub fn new(path: String, link: &str) -> Result<Site<'a>> {
+    pub fn new(path: String) -> Result<Site<'a>> {
 
         let file_path = Path::new(&path);
         let file_name = file_path.file_name().unwrap();
@@ -32,7 +31,6 @@ impl<'a> Site<'a> {
         Ok(Site{
             path: path.to_string(),
             name: file_name.to_str().unwrap().to_string(),
-            link: link.to_string(),
             ..Default::default()
         })
     }
@@ -59,7 +57,6 @@ impl<'a> Site<'a> {
                     if file_type.is_dir() {
                         let path = path.path().to_str().unwrap().to_string();
                         let mut dir = Directory::new(&path)?;
-                        dir.link_prefix = self.link.clone();
                         dir.analyze()?;
                         self.dirs.push(dir);
                     }

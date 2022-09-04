@@ -267,6 +267,7 @@ dependencies = [
  "env_logger",
  "futures",
  "handlebars",
+ "http",
  "log",
  "once_cell",
  "rss",

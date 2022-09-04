@@ -13,8 +13,8 @@ use std::path::PathBuf;
 use actix_web::{
     get,
     web,
-    App, HttpResponse, HttpServer,
-    Responder,
+    App, HttpRequest, HttpResponse, HttpServer,
+    Responder
 };
 
 use actix_files::NamedFile;
@@ -26,7 +26,7 @@ use actix_web::http::StatusCode;
 #[clap(propagate_version = true)]
 struct Cli {
     #[clap(short, long, default_value_t = String::from("0.0.0.0"))]
-    server: String,
+    bind: String,
 
     #[clap(short, long, default_value_t = 8080)]
     port: u32,
@@ -40,11 +40,16 @@ async fn index(site: web::Data<Site<'_>>) -> impl Responder {
 }
 
 #[get("/p/{podcast}")]
-async fn podcast(site: web::Data<Site<'_>>, podcast: web::Path<String>) -> impl Responder {
+async fn podcast(req: HttpRequest, site: web::Data<Site<'_>>, podcast: web::Path<String>) -> impl Responder {
     info!("Getting rss xml for podcast {}", podcast);
+
+    let info = req.connection_info();
+    let scheme = info.scheme();
+    let host = info.host();
+
     match site.get_directory(&podcast) {
         Some(dir) => {
-            let rss_xml = dir.to_rss_xml().unwrap();
+            let rss_xml = dir.to_rss_xml(&scheme, &host).unwrap();
             HttpResponse::Ok().body(rss_xml)
         },
         None => {
@@ -80,15 +85,13 @@ async fn main() -> Result<()> {
 
     let cli = Cli::parse();
 
-    let link = format!("http://{}:{}", &cli.server, &cli.port);
-
     let cur_dir = env::current_dir()?;
+    let bind = cli.bind;
     let port = cli.port as u16;
 
     HttpServer::new(move || {
         let mut site : Site = Site::new(
             cur_dir.to_str().unwrap().to_string(),
-            &link
         ).unwrap();
 
         site.detect_directories().unwrap();
@@ -100,7 +103,7 @@ async fn main() -> Result<()> {
             .service(podcast)
             .service(media)
     })
-        .bind(("0.0.0.0", port))?
+        .bind((bind, port))?
         .run()
         .await?;
 

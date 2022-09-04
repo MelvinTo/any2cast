@@ -28,14 +28,13 @@ impl fmt::Display for DirectoryError {
 
 impl std::error::Error for DirectoryError {}
 
+static LINK_PLACEHOLDER : &str = "__PLACEHOLDER__";
 
 #[derive(Debug, Default, Serialize, Clone)]
 pub struct Directory {
     path: String,
     pub name: String,
     pub link: Option<String>,
-
-    pub link_prefix: String,
 
     #[serde(skip_serializing)]
     items: Vec<Item>,
@@ -112,7 +111,7 @@ impl Directory {
         let title = file_stem.to_str().ok_or(DirectoryError::InvalidFilename)?;
         item.set_title(title.to_string());
 
-        let link = format!("{}/p/{}/{}", self.link_prefix, self.name, file_name);
+        let link = format!("{}/p/{}/{}", LINK_PLACEHOLDER, self.name, file_name);
 
         item.set_link(link.clone());
 
@@ -148,7 +147,7 @@ impl Directory {
     }
 
     /// Generate rss xml file content
-    pub fn to_rss_xml(&self) -> Result<String> {
+    pub fn to_rss_xml(&self, scheme: &str, host: &str) -> Result<String> {
 //        let ext = ITunesChannelExtensionBuilder::default()
 //            .image(IMAGE_URL.to_string())
 //            .build()
@@ -156,7 +155,7 @@ impl Directory {
 
         let mut channel = ChannelBuilder::default()
             .title(self.name.clone())
-            .link(self.get_rss_link())
+            .link(self.get_rss_link(scheme, host))
             .description("".to_string())
           //  .itunes_ext(ext)
             .build()
@@ -165,11 +164,13 @@ impl Directory {
 
         channel.items.extend(self.items.clone());
 
-        Ok(channel.to_string())
+        let channel_str = channel.to_string();
+        let link = format!("{}/{}", &scheme, &host);
+        Ok(channel_str.replace(LINK_PLACEHOLDER, &link))
     }
 
-    fn get_rss_link(&self) -> String {
-        format!("{}/p/{}", self.link_prefix, self.name)
+    fn get_rss_link(&self, scheme: &str, host: &str) -> String {
+        format!("{}://{}/p/{}", scheme, host, self.name)
     }
 
 }
@@ -216,7 +217,6 @@ mod tests {
     fn test_to_rss_xml() {
         let path = "./example/21st_century_movie";
         let mut directory = Directory::new(path).expect("failed to parse path");
-        directory.link_prefix = "http://10.10.0.65:8000".into();
 
         assert_eq!(directory.path, path);
         assert_eq!(directory.name, "21st_century_movie");
@@ -228,7 +228,7 @@ mod tests {
 
         assert_eq!(directory.num_of_episodes(), 1);
 
-        let output = directory.to_rss_xml().expect("failed to generate xml");
+        let output = directory.to_rss_xml("http", "localhost:8080").expect("failed to generate xml");
         println!("output: {}", output);
     }
 }
