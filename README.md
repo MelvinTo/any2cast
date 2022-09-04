@@ -1,5 +1,5 @@
 # What is it
-* This is a tool to convert directories of mp3 to podcast, so that podcast client can subscribe and listen
+* This is a tool to convert directories of mp3 to podcasts, so that podcast client can subscribe and listen
 * When running, it will serve a http service where you can get podcast links for each directory.
 * Paste the link in podcast client and enjoy!
 
