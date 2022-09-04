@@ -41,8 +41,6 @@ impl<'a> Site<'a> {
     pub fn prepare_static_files(&mut self) -> Result<()> {
         let mut hbars = Handlebars::new();
         hbars.register_template_string("podcasts", include_str!("../static/podcasts.html"))?;
-        //hbars.register_templates_directory(".html", "./static/")?;
-        println!("{:?}", hbars.get_templates());
         self.hb = Some(hbars);
         Ok(())
     }
@@ -61,7 +59,6 @@ impl<'a> Site<'a> {
                 if let Ok(file_type) = path.file_type() {
                     if file_type.is_dir() {
                         let path = path.path().to_str().unwrap().to_string();
-                        println!("Name: {}", &path);
                         let mut dir = Directory::new(&path)?;
                         dir.link_prefix = self.link.clone();
                         dir.analyze()?;

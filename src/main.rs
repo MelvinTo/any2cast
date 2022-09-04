@@ -27,12 +27,11 @@ use actix_web::http::{header, Method, StatusCode};
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
 #[clap(propagate_version = true)]
-#[clap(arg_required_else_help = true)]
 struct Cli {
-    #[clap(short, long)]
+    #[clap(short, long, default_value_t = String::from("0.0.0.0"))]
     server: String,
 
-    #[clap(short, long)]
+    #[clap(short, long, default_value_t = 8080)]
     port: u32,
 }
 
@@ -103,8 +102,6 @@ async fn main() -> Result<()> {
             .service(index)
             .service(podcast)
             .service(media)
-//            .route("/", web::get().to(index))
-//            .route("/p/{podcast}", web::get().to(podcast))
     })
         .bind(("0.0.0.0", port))?
         .run()

@@ -73,16 +73,15 @@ impl Directory {
             let file_type = entry.file_type().unwrap();
 
             if ! file_type.is_file() {
-                info!("Ignore non-file entry: {:?}", &entry);
+                debug!("Ignore non-file entry: {:?}", &entry);
                 continue;
             }
 
             let path = entry.path();
             let file_name = path.file_name().unwrap();
-            println!("XXX: {:?}", &file_name);
 
             if let None = path.extension() {
-                info!("Ignore file with no extension: {:?}", &path);
+                debug!("Ignore file with no extension: {:?}", &path);
                 continue;
             }
 
@@ -99,7 +98,6 @@ impl Directory {
         valid_files.sort();
 
         for f in valid_files.iter() {
-            println!("Name: {}", &f);
             let item = self.to_rss_item(&f)?;
             self.add_item(&item);
         }

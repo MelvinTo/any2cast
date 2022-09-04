@@ -14,6 +14,8 @@ $ find .
 ./podcast3/3.mp3
 ./podcast2
 ./podcast2/2.mp3
+
+$ any2cast
 ```
 
 <img width="1124" alt="Screen Shot 2022-09-04 at 3 22 28 PM" src="https://user-images.githubusercontent.com/108800/188302286-acdd7a45-cd5d-4c83-aca9-ddf8670202f1.png">
