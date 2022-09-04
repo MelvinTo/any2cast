@@ -18,6 +18,8 @@ pub struct Site<'a> {
     hb: Option<Handlebars<'a>>,
 
     pub dirs: Vec<Directory>,
+
+    output_cache: Option<String>,
 }
 
 impl<'a> Site<'a> {
@@ -42,10 +44,14 @@ impl<'a> Site<'a> {
         Ok(())
     }
 
-    pub fn to_html(&self) -> Result<String> {
-        let json = serde_json::to_value(&self)?;
-        let body = self.hb.as_ref().unwrap().render("podcasts", &json)?;
-        Ok(body.to_string())
+    pub fn to_html(&mut self) -> Result<String> {
+        if self.output_cache.is_none() {
+            let json = serde_json::to_value(&self)?;
+            let body = self.hb.as_ref().unwrap().render("podcasts", &json)?;
+            self.output_cache = Some(body.to_string());
+        }
+
+        Ok(self.output_cache.as_ref().unwrap().to_string())
     }
 
     pub fn detect_directories(&mut self) -> Result<()> {
