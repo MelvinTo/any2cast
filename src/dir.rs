@@ -165,7 +165,7 @@ impl Directory {
         channel.items.extend(self.items.clone());
 
         let channel_str = channel.to_string();
-        let link = format!("{}/{}", &scheme, &host);
+        let link = format!("{}://{}", &scheme, &host);
         Ok(channel_str.replace(LINK_PLACEHOLDER, &link))
     }
 
